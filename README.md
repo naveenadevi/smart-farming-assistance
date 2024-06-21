@@ -19,5 +19,9 @@ challenges.
 
 ![image](https://github.com/naveenadevi/smart-farming-assistance/assets/115066819/ee7ec823-9f43-4859-baa3-e55f6d68d745)
 ![image](https://github.com/naveenadevi/smart-farming-assistance/assets/115066819/a207c646-0d82-4f17-bbc1-777fb823ad93)
+![image](https://github.com/naveenadevi/smart-farming-assistance/assets/115066819/b01b608f-185c-41e7-aba1-4ba04210b6cc)
+![image](https://github.com/naveenadevi/smart-farming-assistance/assets/115066819/aec4486d-0f42-41c4-8afc-c813b4cebf35)
+
+
 
 
