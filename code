@@ -1,0 +1,118 @@
+from tkinter import *
+import sqlite3
+from PIL import ImageTk,Image
+root=Tk()
+def getd():
+       
+    name=Label(root,text="ENTER NAME :",font=("Arial Black",15)).place(x=650,y=250)
+    n=Entry(root)
+    n.place(x=900,y=250)
+    crop=Label(root,text="ENTER CROP:",font=("Arial Black",15)).place(x=650,y=300)
+    c=Entry(root)
+    c.place(x=900,y=300)
+    area=Label(root,text="ENTER AREA :",font=("Arial Black",15)).place(x=650,y=350)
+    a=Entry(root)
+    a.place(x=900,y=360)
+    duration=Label(root,text="ENTER DURATION:",font=("Arial Black",15)).place(x=650,y=400)
+    d=Entry(root)
+    d.place(x=900,y=400)
+    mail_id=Label(root,text="ENTER MAIL ID:",font=("Arial Black",15)).place(x=650,y=450)
+    m=Entry(root)
+    m.place(x=900,y=450)
+    conn = sqlite3.connect("irrigation2.db")
+    # Create a cursor object to execute SQL commands
+    cursor = conn.cursor()
+    # Create the table if it doesn't exist
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS crops (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_name TEXT NOT NULL,
+            crop_name TEXT NOT NULL,
+            place TEXT NOT NULL,
+            duration TEXT NOT NULL,
+            mail_id TEXT NOT NULL
+        )
+    ''')
+
+    # Commit the changes and close the connection
+    conn.commit()
+    conn.close()
+    
+    def mail_id(m,time):
+        from email.message import EmailMessage
+        import ssl
+        import smtplib
+
+        sender="/*your mail*/"
+        f=open("/*file path */","r")
+        password=f.read()
+        receiver=m
+
+        subject="Irrigation Reminder"
+        body=("Days left until next irrigation: "+str(time))
+
+        em=EmailMessage()
+        em['From']=sender
+        em['To']=receiver
+        em['Subject']=subject
+        em.set_content(body)
+
+        context=ssl.create_default_context()
+
+        with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+            smtp.login(sender, password)
+            smtp.sendmail(sender,receiver, em.as_string())
+
+    
+    #conn = sqlite3.connect("irrigation.db")
+    # Create a cursor object to execute SQL commands
+   
+    def weather(a):
+        
+        import datetime as dt
+        import requests
+        base_url="http://api.openweathermap.org/data/2.5/weather?"
+        api_key="/* api id * /"
+        city=a
+        url = base_url+"appid="+api_key+"&q="+city
+        response=requests.get(url).json()
+        print(response)
+        humid=response["main"]["humidity"]
+        du=int(d.get())
+        if humid<20:
+            time=du-1
+        elif humid>70:
+            time=du+1
+        else:
+            time=du
+        hum=Label(root,text="The curent humidity level:"+str(humid),font=("Arial Black",15))
+        hum.place(x=600,y=600)
+        time2=Label(root,text="The modified duration of irrigation in days:"+str(time),font=("Arial Black",15))
+        time2.place(x=600,y=650)
+        mail_id(m.get(),time)
+            #inserting data	
+    def insert_data():
+        
+        import sqlite3
+        conn = sqlite3.connect("irrigation2.db")
+        cursor = conn.cursor()
+        cursor.execute('''INSERT INTO crops (user_name, crop_name, place, duration, mail_id)  VALUES (:name, :crop, :area, :duration,:mail_id)''',{'name':n.get(),'crop':c.get(),'area':a.get(),'duration':d.get(),'mail_id':m.get()})
+        conn.commit()
+        conn.close()
+        suc=Label(root,text="SUBMITTED SUCCESSFULLY",font=("Arial Black",10))
+        suc.place(x=750,y=550)
+        humidity=weather(a.get())
+       
+    submit=Button(root,text="SUBMIT",font=("Arial Black",10),command=insert_data)
+    submit.place(x=950,y=500)
+image=Image.open("C:/Users/91630/Desktop/bg.png")
+bg=ImageTk.PhotoImage(image)
+root.geometry('5000x5000') 
+l=Label(root,image=bg,borderwidth=0)
+l.place(x=100,y=0)
+    
+label=Label(root,text="WELCOME TO SMART FARMING ASSISTANCE",font=("Arial Black",30))
+label.place(relx=0.5,rely=0.1,anchor="center")
+button=Button(root,text="click here to enter!",font=("Arial Black",10),command=getd)
+button.place(x=650,y=175)
+root.mainloop()
